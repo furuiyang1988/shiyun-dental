@@ -8,11 +8,19 @@
 /* === 种植牙计算器 · 内联配置 === */
 var CLINIC_CONFIG = { name: "诗韵口腔", subtitle: "自由搭配 · 透明定价", headerTitle: "选择您的\n种植方案", headerSubtitle: "产品 · 技术服务 · 质保 — 三大项自由组合", contact: "", logo: "" };
 var implants = [
-  { id:'nobel', name:'诺贝尔', brand:'Nobel Biocare', origin:'🇸🇪 瑞典', feat:'全球种植牙发明者 · 亲水表面 · 愈合快', price:7800, icon:'N', tag:'高端' },
-  { id:'straumann', name:'士卓曼', brand:'Straumann', origin:'🇨🇭 瑞士', feat:'瑞士精工 · Roxolid材质 · 长期稳定', price:6500, icon:'S', tag:'高端' },
-  { id:'osstem', name:'奥齿泰', brand:'Osstem', origin:'🇰🇷 韩国', feat:'亚洲人适配 · 性价比之王 · 百万例临床', price:3800, icon:'O', tag:'中端' },
-  { id:'dentium', name:'登腾', brand:'Dentium', origin:'🇰🇷 韩国', feat:'SLA表面处理 · 高性价比 · 适应症广', price:2800, icon:'D', tag:'中端' },
-  { id:'domestic', name:'百康特', brand:'国产集采', origin:'🇨🇳 中国', feat:'集采中选品牌 · 质量可靠 · 价格惠民', price:1800, icon:'百', tag:'集采' }
+  { id:'baikangte', name:'百康特', brand:'国产集采', origin:'🇨🇳 中国', feat:'集采中选品牌 · 质量可靠 · 价格惠民', price:630, icon:'百', tag:'集采' },
+  { id:'snugcone', name:'仕诺康', brand:'SNUCONE', origin:'🇰🇷 韩国', feat:'韩系性价比之选 · 工艺稳定 · 适应症广', price:729, icon:'仕', tag:'集采' },
+  { id:'osstem', name:'Osstem', brand:'Osstem', origin:'🇰🇷 韩国', feat:'亚洲人适配 · 结构设计精良 · 初期固位力强', price:771, icon:'O', tag:'集采' },
+  { id:'cowell', name:'Cowell', brand:'Cowell', origin:'🇰🇷 韩国', feat:'韩系优质品牌 · 工艺成熟 · 临床认可度高', price:729, icon:'C', tag:'集采' },
+  { id:'meishuda', name:'每舒达', brand:'Meshuda', origin:'🇰🇷 韩国', feat:'韩系新锐品牌 · 高性价比 · 品质可靠', price:729, icon:'每', tag:'集采' },
+  { id:'point', name:'Point', brand:'Point', origin:'🇰🇷 韩国', feat:'韩系经典品牌 · 稳定性好 · 临床广泛应用', price:729, icon:'P', tag:'集采' },
+  { id:'hiossen', name:'HIOSSEN 皓圣', brand:'HIOSSEN', origin:'🇺🇸 美国', feat:'即刻种植代表品牌 · 骨结合快 · 长期稳定', price:1500, icon:'H', tag:'集采' },
+  { id:'straumann', name:'Straumann', brand:'Straumann', origin:'🇨🇭 瑞士', feat:'瑞士精工 · SLActive表面技术 · 全球领先', price:1855, icon:'S', tag:'集采' },
+  { id:'nobel_pmc', name:'诺贝尔 PMC', brand:'Nobel Biocare', origin:'🇸🇪 瑞典', feat:'种植牙发明者 · 经典传承 · 品质卓越', price:1855, icon:'N', tag:'集采' },
+  { id:'point_hydro', name:'Point 亲水', brand:'Point Hydrophilic', origin:'🇰🇷 韩国', feat:'亲水表面 · 加速骨结合 · 愈合周期缩短30%', price:5500, icon:'P+', tag:'高端' },
+  { id:'osstem_hydro', name:'Osstem 亲水', brand:'Osstem Hydrophilic', origin:'🇰🇷 韩国', feat:'亲水升级款 · 即刻负重优选 · 骨增量适配', price:5500, icon:'O+', tag:'高端' },
+  { id:'nobel_active', name:'诺贝尔 Active 金粒', brand:'Nobel Biocare', origin:'🇸🇪 瑞典', feat:'全球顶级 · 即刻负重 · 终身质保', price:12000, icon:'金', tag:'高端' },
+  { id:'straumann_hydro', name:'Straumann 亲水', brand:'Straumann Roxolid', origin:'🇨🇭 瑞士', feat:'瑞锆亲水 · 钛锆合金 · 强度提升30%', price:10000, icon:'瑞', tag:'高端' }
 ];
 var crowns = [
   { id:'lava', name:'LAVA全瓷冠', brand:'3M Lava', origin:'🇺🇸 美国', feat:'顶级美学 · 强度1400MPa · 前牙首选', price:3500, icon:'L', tag:'高端' },
@@ -686,7 +694,7 @@ function renderImplants() {
       <div class="card-sub">${(b.origin||'') + ' · ' + (b.brand||'')}</div>
       <div class="card-feat">${b.feat||''}</div>
       <div class="card-price">¥${(b.price||0).toLocaleString()} <span>/颗</span></div>
-      <div class="card-tags"><span class="policy-tag procurement">国家集采</span><span class="policy-tag zero">0差价</span></div>
+      <div class="card-tags">${b.tag==='集采'?'<span class="policy-tag procurement">国家集采</span><span class="policy-tag zero">0差价</span>':'<span class="policy-tag regulation">高端升级</span>'}</div>
     </div>
   `).join('');
 }
