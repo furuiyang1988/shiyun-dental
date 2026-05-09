@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>种植牙计算器 · 后台管理</title>
+<style>
+:root {
+  --primary: #1A7A7A;
+  --primary-light: #E8F4F4;
+  --accent: #D4956B;
+  --bg: #F5F5F5;
+  --card: #FFFFFF;
+  --text: #2C3E50;
+  --text-light: #7F8C8D;
+  --border: #E0E0E0;
+  --success: #27AE60;
+  --danger: #E74C3C;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
+header { background: linear-gradient(135deg, #1A7A7A, #156060); color: white; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+header h1 { font-size: 18px; font-weight: 700; }
+header p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+header .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
+.btn-primary { background: white; color: var(--primary); }
+.btn-primary:hover { background: var(--primary-light); }
+.btn-accent { background: var(--accent); color: white; }
+.btn-danger { background: var(--danger); color: white; font-size: 11px; padding: 5px 10px; }
+.btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+.container { max-width: 960px; margin: 0 auto; padding: 20px 16px; }
+.section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 16px; }
+.section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.section-title { font-size: 15px; font-weight: 700; }
+.tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.tag-blue { background: var(--primary-light); color: var(--primary); }
+.tag-orange { background: #FDF6F0; color: var(--accent); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 3px; }
+.form-group label { font-size: 11px; font-weight: 600; color: var(--text-light); }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px;
+  font-size: 13px; color: var(--text); outline: none; font-family: inherit;
+  background: white;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+.form-group textarea { resize: vertical; min-height: 48px; }
+.item-card { background: var(--bg); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+.item-card .card-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.item-card .card-title { font-size: 13px; font-weight: 700; color: var(--text); }
+
+.tab-bar { display: flex; gap: 0; margin-bottom: 16px; background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); flex-wrap: wrap; }
+.tab-bar button { padding: 10px 14px; border: none; background: transparent; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent; font-family: inherit; }
+.tab-bar button.active { color: var(--primary); background: var(--primary-light); border-bottom-color: var(--primary); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.btn-add { width: 100%; padding: 10px; border: 2px dashed var(--border); border-radius: 8px; background: transparent; color: var(--text-light); font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 4px; }
+.btn-add:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.toast { position: fixed; top: 20px; right: 20px; background: var(--success); color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .form-row.three { grid-template-columns: 1fr; }
+  .tab-bar button { padding: 8px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🌿 种植方案工具 · 后台管理</h1>
+    <p>自定义所有内容，修改后导出配置文件</p>
+  </div>
+  <div class="btns">
+    <button class="btn btn-outline" onclick="importConfigFile()">📂 导入配置</button>
+    <button class="btn btn-primary" onclick="exportConfig()">📥 导出 config.js</button>
+    <button class="btn btn-accent" onclick="previewPage()">👁️ 预览患者端</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tab-bar">
+    <button class="active" onclick="switchTab('clinic',this)">🏥 诊所</button>
+    <button onclick="switchTab('implants',this)">💎 种植体</button>
+    <button onclick="switchTab('crowns',this)">🦷 牙冠</button>
+    <button onclick="switchTab('doctors',this)">👨⚕️ 医生</button>
+    <button onclick="switchTab('techniques',this)">⚙️ 方案</button>
+    <button onclick="switchTab('addons',this)">➕ 附加</button>
+    <button onclick="switchTab('warranty',this)">🛡️ 质保</button>
+  </div>
+
+  <!-- Tab: 诊所信息 -->
+  <div class="tab-content active" id="tab-clinic">
+    <div class="section">
+      <div class="section-hd"><div class="section-title">🏥 诊所基本信息</div></div>
+      <div class="form-row">
+        <div class="form-group"><label>诊所名称</label><input type="text" id="f-clinic-name" oninput="cfg.clinic.name=this.value"></div>
+        <div class="form-group"><label>副标题</label><input type="text" id="f-clinic-subtitle" oninput="cfg.clinic.subtitle=this.value"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>主标题（可用 \n 换行）</label><input type="text" id="f-clinic-headerTitle" oninput="cfg.clinic.headerTitle=this.value"></div>
+        <div class="form-group"><label>主标题副文</label><input type="text" id="f-clinic-headerSubtitle" oninput="cfg.clinic.headerSubtitle=this.value"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>联系电话（可选）</label><input type="text" id="f-clinic-contact" oninput="cfg.clinic.contact=this.value"></div>
+        <div class="form-group"><label>Logo 图片路径（可选）</label><input type="text" id="f-clinic-logo" oninput="cfg.clinic.logo=this.value"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: 种植体 -->
+  <div class="tab-content" id="tab-implants">
+    <div class="section">
+      <div class="section-hd"><div class="section-title">💎 种植体系统 <span class="tag tag-blue">国家集采</span></div><button class="btn btn-primary" onclick="addItem('implants')">＋ 添加</button></div>
+      <div id="list-implants"></div>
+      <button class="btn-add" onclick="addItem('implants')">＋ 添加种植体</button>
+    </div>
+  </div>
+
+  <!-- Tab: 牙冠 -->
+  <div class="tab-content" id="tab-crowns">
+    <div class="section">
+      <div class="section-hd"><div class="section-title">🦷 牙冠 <span class="tag tag-blue">国家集采</span></div><button class="btn btn-primary" onclick="addItem('crowns')">＋ 添加</button></div>
+      <div id="list-crowns"></div>
+      <button class="btn-add" onclick="addItem('crowns')">＋ 添加牙冠</button>
+    </div>
+  </div>
+
+  <!-- Tab: 医生 -->
+  <div class="tab-content" id="tab-doctors">
+    <div class="section">
+      <div class="section-hd"><div class="section-title">👨⚕️ 医生信息 <span class="tag tag-orange">分级调控价</span></div><button class="btn btn-primary" onclick="addItem('doctors')">＋ 添加</button></div>
+      <div id="list-doctors"></div>
+      <button class="btn-add" onclick="addItem('doctors')">＋ 添加医生</button>
+    </div>
+  </div>
+
+  <!-- Tab: 种植方案 -->
+  <div class="tab-content" id="tab-techniques">
+    <div class="section">
+      <div class="section-hd"><div class="section-title">⚙️ 种植方案</div><button class="btn btn-primary" onclick="addItem('techniques')">＋ 添加</button></div>
+      <div id="list-techniques"></div>
+      <button class="btn-add" onclick="addItem('techniques')">＋ 添加方案</button>
+    </div>
+  </div>
+
+  <!-- Tab: 附加术式 -->
+  <div class="tab-content" id="tab-addons">
+    <div class="section">
+      <div class="section-hd"><div class="section-title">➕ 附加术式 / 服务</div><button class="btn btn-primary" onclick="addItem('addons')">＋ 添加</button></div>
+      <div id="list-addons"></div>
+      <button class="btn-add" onclick="addItem('addons')">＋ 添加项目</button>
+    </div>
+  </div>
+
+  <!-- Tab: 质保 -->
+  <div class="tab-content" id="tab-warranty">
+    <div class="section">
+      <div class="section-hd"><div class="section-title">🛡️ 质保方案</div></div>
+      <h4 style="font-size:13px;color:var(--text-light);margin-bottom:10px;">产品质保选项</h4>
+      <div id="list-productWarrantyOpts"></div>
+      <button class="btn-add" onclick="addItem('productWarrantyOpts')">＋ 添加产品质保选项</button>
+      <h4 style="font-size:13px;color:var(--text-light);margin-top:20px;margin-bottom:10px;">医疗质保选项</h4>
+      <div id="list-medicalWarrantyOpts"></div>
+      <button class="btn-add" onclick="addItem('medicalWarrantyOpts')">＋ 添加医疗质保选项</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- 隐藏的文件导入 -->
+<input type="file" id="fileInput" accept=".js" style="display:none" onchange="handleFileImport(event)">
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== 全局配置状态 ====================
+const cfg = {
+  clinic: { name:"诗韵口腔", subtitle:"自由搭配 · 透明定价", headerTitle:"选择您的\n种植方案", headerSubtitle:"产品 · 技术服务 · 质保 — 三大项自由组合", contact:"", logo:"" },
+  implants: [],
+  crowns: [],
+  doctors: [],
+  techniques: [],
+  addons: [],
+  productWarrantyOpts: [],
+  medicalWarrantyOpts: [],
+};
+
+const FIELD_DEFS = {
+  implants: [
+    {key:'id', label:'ID', type:'text'},
+    {key:'name', label:'名称', type:'text'},
+    {key:'brand', label:'品牌', type:'text'},
+    {key:'origin', label:'产地', type:'text'},
+    {key:'feat', label:'特点', type:'textarea'},
+    {key:'price', label:'价格（元）', type:'number'},
+    {key:'icon', label:'图标文字', type:'text'},
+    {key:'tag', label:'标签', type:'text'},
+  ],
+  crowns: [
+    {key:'id', label:'ID', type:'text'},
+    {key:'name', label:'名称', type:'text'},
+    {key:'brand', label:'品牌', type:'text'},
+    {key:'origin', label:'产地', type:'text'},
+    {key:'feat', label:'特点', type:'textarea'},
+    {key:'price', label:'价格（元）', type:'number'},
+    {key:'icon', label:'图标文字', type:'text'},
+    {key:'tag', label:'标签', type:'text'},
+  ],
+  doctors: [
+    {key:'id', label:'ID', type:'text'},
+    {key:'name', label:'姓名', type:'text'},
+    {key:'title', label:'职称', type:'text'},
+    {key:'years', label:'从业年限', type:'number'},
+    {key:'cases', label:'案例数', type:'number'},
+    {key:'spec', label:'擅长', type:'textarea'},
+    {key:'baseFee', label:'基础费（元）', type:'number'},
+    {key:'avatar', label:'头像文字', type:'text'},
+  ],
+  techniques: [
+    {key:'id', label:'ID', type:'text'},
+    {key:'name', label:'名称', type:'text'},
+    {key:'desc', label:'描述', type:'textarea'},
+    {key:'price', label:'加价（元）', type:'number'},
+  ],
+  addons: [
+    {key:'id', label:'ID', type:'text'},
+    {key:'name', label:'名称', type:'text'},
+    {key:'desc', label:'描述', type:'textarea'},
+    {key:'price', label:'价格（元）', type:'number'},
+  ],
+  productWarrantyOpts: [
+    {key:'id', label:'ID', type:'text'},
+    {key:'label', label:'标签名', type:'text'},
+    {key:'badge', label:'徽章文字', type:'text'},
+    {key:'price', label:'加价（元）', type:'number'},
+  ],
+  medicalWarrantyOpts: [
+    {key:'id', label:'ID', type:'text'},
+    {key:'label', label:'标签名', type:'text'},
+    {key:'badge', label:'徽章文字', type:'text'},
+    {key:'price', label:'加价（元）', type:'number'},
+  ],
+};
+
+const TEMPLATES = {
+  implants: {id:'', name:'新种植体', brand:'', origin:'', feat:'', price:0, icon:'', tag:''},
+  crowns: {id:'', name:'新牙冠', brand:'', origin:'', feat:'', price:0, icon:'', tag:''},
+  doctors: {id:'', name:'新医生', title:'主治医师', years:5, cases:0, spec:'', baseFee:1500, avatar:''},
+  techniques: {id:'', name:'新方案', desc:'方案描述', price:0},
+  addons: {id:'', name:'新项目', desc:'项目描述', price:0},
+  productWarrantyOpts: {id:'', label:'新质保选项', badge:'', price:0},
+  medicalWarrantyOpts: {id:'', label:'新质保选项', badge:'', price:0},
+};
+
+// ==================== 初始化：从 config.js 读取 ====================
+async function init() {
+  try {
+    const resp = await fetch('./config.js');
+    const text = await resp.text();
+    // 提取 JS 常量
+    const extract = (name) => {
+      const re = new RegExp(`(?:const|var|let)\\s+${name}\\s*=\\s*([\\s\\S]*?);(?:\\s*//|\\s*$|\\s*const|\\s*var|\\s*let|\\s*function)`);
+      const m = text.match(re);
+      if (m) {
+        try { return eval('(' + m[1].trim() + ')'); } catch(e) {}
+      }
+      return null;
+    };
+    const ci = extract('CLINIC_CONFIG'); if (ci) cfg.clinic = ci;
+    const im = extract('implants');      if (im) cfg.implants = im;
+    const cr = extract('crowns');        if (cr) cfg.crowns = cr;
+    const dr = extract('doctors');       if (dr) cfg.doctors = dr;
+    const tc = extract('techniques');    if (tc) cfg.techniques = tc;
+    const ad = extract('addons');        if (ad) cfg.addons = ad;
+    const pw = extract('productWarrantyOpts'); if (pw) cfg.productWarrantyOpts = pw;
+    const mw = extract('medicalWarrantyOpts'); if (mw) cfg.medicalWarrantyOpts = mw;
+  } catch(e) { console.warn('config.js 读取失败，使用默认空数据', e); }
+  applyClinicForm();
+  renderAllLists();
+}
+
+function applyClinicForm() {
+  document.getElementById('f-clinic-name').value = cfg.clinic.name||'';
+  document.getElementById('f-clinic-subtitle').value = cfg.clinic.subtitle||'';
+  document.getElementById('f-clinic-headerTitle').value = cfg.clinic.headerTitle||'';
+  document.getElementById('f-clinic-headerSubtitle').value = cfg.clinic.headerSubtitle||'';
+  document.getElementById('f-clinic-contact').value = cfg.clinic.contact||'';
+  document.getElementById('f-clinic-logo').value = cfg.clinic.logo||'';
+}
+
+// ==================== 渲染列表 ====================
+function renderAllLists() {
+  ['implants','crowns','doctors','techniques','addons','productWarrantyOpts','medicalWarrantyOpts'].forEach(renderList);
+}
+
+function renderList(type) {
+  const idMap = { implants:'list-implants', crowns:'list-crowns', doctors:'list-doctors', techniques:'list-techniques', addons:'list-addons', productWarrantyOpts:'list-productWarrantyOpts', medicalWarrantyOpts:'list-medicalWarrantyOpts' };
+  const el = document.getElementById(idMap[type]);
+  if (!el) return;
+  const arr = cfg[type] || [];
+  el.innerHTML = arr.map((item, idx) => renderCard(type, item, idx)).join('');
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s ?? '';
+  return d.innerHTML;
+}
+
+function renderCard(type, item, idx) {
+  const fields = FIELD_DEFS[type] || [];
+  let html = `<div class="item-card">
+    <div class="card-hd">
+      <div class="card-title">${esc(item.name || item.label || ('项目'+(idx+1)))}</div>
+      <button class="btn btn-danger" onclick="removeItem('${type}',${idx})">删除</button>
+    </div>
+    <div class="form-row ${fields.length>=4?'three':''}">`;
+  fields.forEach(f => {
+    const val = item[f.key] ?? '';
+    if (f.type === 'textarea') {
+      html += `<div class="form-group" style="grid-column:1/-1;"><label>${f.label}</label><textarea data-type="${type}" data-idx="${idx}" data-key="${f.key}" oninput="onFieldInput(this)">${esc(val)}</textarea></div>`;
+    } else {
+      html += `<div class="form-group"><label>${f.label}</label><input type="${f.type}" value="${esc(String(val))}" data-type="${type}" data-idx="${idx}" data-key="${f.key}" oninput="onFieldInput(this)"></div>`;
+    }
+  });
+  html += `</div></div>`;
+  return html;
+}
+
+function onFieldInput(el) {
+  const {type, idx, key} = el.dataset;
+  const arr = cfg[type];
+  if (!arr) return;
+  const item = arr[Number(idx)];
+  if (!item) return;
+  if (el.type === 'number') {
+    item[key] = Number(el.value) || 0;
+  } else {
+    item[key] = el.value;
+  }
+  // 更新卡片标题
+  const card = el.closest('.item-card');
+  const titleEl = card?.querySelector('.card-title');
+  if (titleEl) titleEl.textContent = item.name || item.label || '';
+}
+
+function addItem(type) {
+  const t = TEMPLATES[type];
+  if (!t) return;
+  cfg[type].push({...t, id: t.id + '_' + Date.now()});
+  renderList(type);
+}
+
+function removeItem(type, idx) {
+  if (!confirm('确定删除此项？')) return;
+  cfg[type].splice(idx, 1);
+  renderList(type);
+}
+
+// ==================== Tab 切换 ====================
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-bar button').forEach(el => el.classList.remove('active'));
+  const tab = document.getElementById('tab-'+name);
+  if (tab) tab.classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ==================== 导出 config.js ====================
+function exportConfig() {
+  const genObj = (obj) => {
+    if (Array.isArray(obj)) return '[\n' + obj.map(v => '  ' + genObj(v)).join(',\n') + '\n]';
+    if (typeof obj === 'string') return "'" + obj.replace(/'/g, "\\'") + "'";
+    if (typeof obj === 'number') return obj;
+    if (typeof obj === 'boolean') return obj;
+    if (obj === null) return 'null';
+    if (typeof obj === 'object') {
+      const entries = Object.entries(obj).map(([k,v]) => '  ' + k + ': ' + genObj(v));
+      return '{\n' + entries.join(',\n') + '\n}';
+    }
+    return JSON.stringify(obj);
+  };
+
+  let js = `// ============================================================\n`;
+  js += `// 种植牙方案选择器 · 配置文件\n`;
+  js += `// 修改此文件即可自定义所有内容，修改后刷新页面即可生效\n`;
+  js += `// ============================================================\n\n`;
+  js += `const CLINIC_CONFIG = ${genObj(cfg.clinic)};\n\n`;
+  js += `const implants = ${genObj(cfg.implants)};\n\n`;
+  js += `const crowns = ${genObj(cfg.crowns)};\n\n`;
+  js += `const doctors = ${genObj(cfg.doctors)};\n\n`;
+  js += `const techniques = ${genObj(cfg.techniques)};\n\n`;
+  js += `const addons = ${genObj(cfg.addons)};\n\n`;
+  js += `const productWarrantyOpts = ${genObj(cfg.productWarrantyOpts)};\n\n`;
+  js += `const medicalWarrantyOpts = ${genObj(cfg.medicalWarrantyOpts)};\n\n`;
+  js += `const TEXT_CONFIG = {\n`;
+  js += `  policyBanner: "国家集采 · 耗材0差价  |  医疗服务分级调控价\\n产品价格与国家集采目录一致，技术服务按国家指导价执行",\n`;
+  js += `  productDesc: "植体+配件+牙冠，价格与国家集采目录一致，门诊不加一分钱",\n`;
+  js += `  techDesc: "选医生 → 选方案 → 选附加术式，按国家分级调控定价",\n`;
+  js += `  warrantyDesc: "产品质保 + 医疗质保，自由选择保障时长",\n`;
+  js += `  trustBar: "医疗质保承诺：医生技术原因导致失败，技术服务费全额退还，免费重做",\n`;
+  js += `  receiptFooter: "到院出示方案单，享免费CBCT检查",\n`;
+  js += `  qrHint: "扫码预约",\n`;
+  js += `};\n`;
+
+  const blob = new Blob([js], {type:'text/javascript;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'config.js';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('✅ config.js 已导出，覆盖原文件即可生效');
+}
+
+// ==================== 导入配置 ====================
+function importConfigFile() {
+  document.getElementById('fileInput').click();
+}
+
+function handleFileImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      // 简单解析：提取各常量
+      const text = e.target.result;
+      const extract = (name) => {
+        const re = new RegExp(`(?:const|var|let)\\s+${name}\\s*=\\s*([\\s\\S]*?);(?:\\s*//|\\s*const|\\s*var|\\s*let|\\s*function)`);
+        const m = text.match(re);
+        if (m) { try { return eval('(' + m[1].trim() + ')'); } catch(e2) {} }
+        return null;
+      };
+      const ci = extract('CLINIC_CONFIG'); if (ci) cfg.clinic = ci;
+      const im = extract('implants');      if (im) cfg.implants = im;
+      const cr = extract('crowns');        if (cr) cfg.crowns = cr;
+      const dr = extract('doctors');       if (dr) cfg.doctors = dr;
+      const tc = extract('techniques');    if (tc) cfg.techniques = tc;
+      const ad = extract('addons');        if (ad) cfg.addons = ad;
+      const pw = extract('productWarrantyOpts'); if (pw) cfg.productWarrantyOpts = pw;
+      const mw = extract('medicalWarrantyOpts'); if (mw) cfg.medicalWarrantyOpts = mw;
+      applyClinicForm();
+      renderAllLists();
+      showToast('✅ 配置已导入');
+    } catch(err) {
+      showToast('❌ 导入失败：' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ==================== 预览 ====================
+function previewPage() {
+  localStorage.setItem('previewConfig', JSON.stringify({
+    CLINIC_CONFIG: cfg.clinic,
+    implants: cfg.implants,
+    crowns: cfg.crowns,
+    doctors: cfg.doctors,
+    techniques: cfg.techniques,
+    addons: cfg.addons,
+    productWarrantyOpts: cfg.productWarrantyOpts,
+    medicalWarrantyOpts: cfg.medicalWarrantyOpts,
+  }));
+  window.open('implant-menu.html', '_blank');
+}
+
+// ==================== Toast ====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ==================== 启动 ====================
+init();
+</script>
+</body>
+</html>
