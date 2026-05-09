@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>种植牙计算器</title>
+<script>
+/* === 种植牙计算器 · 内联配置 === */
+var CLINIC_CONFIG = { name: "诗韵口腔", subtitle: "自由搭配 · 透明定价", headerTitle: "选择您的\n种植方案", headerSubtitle: "产品 · 技术服务 · 质保 — 三大项自由组合", contact: "", logo: "" };
+var implants = [
+  { id:'nobel', name:'诺贝尔', brand:'Nobel Biocare', origin:'🇸🇪 瑞典', feat:'全球种植牙发明者 · 亲水表面 · 愈合快', price:7800, icon:'N', tag:'高端' },
+  { id:'straumann', name:'士卓曼', brand:'Straumann', origin:'🇨🇭 瑞士', feat:'瑞士精工 · Roxolid材质 · 长期稳定', price:6500, icon:'S', tag:'高端' },
+  { id:'osstem', name:'奥齿泰', brand:'Osstem', origin:'🇰🇷 韩国', feat:'亚洲人适配 · 性价比之王 · 百万例临床', price:3800, icon:'O', tag:'中端' },
+  { id:'dentium', name:'登腾', brand:'Dentium', origin:'🇰🇷 韩国', feat:'SLA表面处理 · 高性价比 · 适应症广', price:2800, icon:'D', tag:'中端' },
+  { id:'domestic', name:'百康特', brand:'国产集采', origin:'🇨🇳 中国', feat:'集采中选品牌 · 质量可靠 · 价格惠民', price:1800, icon:'百', tag:'集采' }
+];
+var crowns = [
+  { id:'lava', name:'LAVA全瓷冠', brand:'3M Lava', origin:'🇺🇸 美国', feat:'顶级美学 · 强度1400MPa · 前牙首选', price:3500, icon:'L', tag:'高端' },
+  { id:'wieland', name:'威兰德全瓷冠', brand:'Wieland', origin:'🇩🇪 德国', feat:'高透美学 · 德国精工 · 内外兼修', price:2500, icon:'W', tag:'中高端' },
+  { id:'upcera', name:'爱尔创全瓷冠', brand:'Upcera', origin:'🇨🇳 中国', feat:'国产高端 · 性价比之选 · 集采中选', price:1500, icon:'爱', tag:'集采' },
+  { id:'pfm', name:'烤瓷冠', brand:'钴铬合金', origin:'🇨🇳 中国', feat:'经济实惠 · 后牙适用 · 基础款', price:800, icon:'烤', tag:'基础' }
+];
+var doctors = [
+  { id:'zhang', name:'张伟', title:'主任医师', years:25, cases:5000, spec:'全口种植 · 即刻负重 · 骨增量', baseFee:3500, avatar:'张' },
+  { id:'li', name:'李明', title:'副主任医师', years:15, cases:2000, spec:'数字化导板 · 前牙美学 · 微创种植', baseFee:2500, avatar:'李' },
+  { id:'wang', name:'王芳', title:'主治医师', years:8, cases:800, spec:'常规种植 · 微创种植 · 牙周治疗', baseFee:1500, avatar:'王' }
+];
+var techniques = [
+  { id:'digital', name:'🎯 数字化导板精准种植', desc:'CBCT+口扫+3D打印导板，精准到0.1mm，微创出血少，恢复快', price:1500 },
+  { id:'navigation', name:'🧭 3D打印手术导板辅助', desc:'术前模拟+定制导板，定位准确，手术时间缩短30%', price:1000 },
+  { id:'standard', name:'✋ 标准种植', desc:'经验丰富的医生凭手感操作，适合常规简单病例', price:0 }
+];
+var addons = [
+  { id:'immediate', name:'⚡ 即刻种植（即拔即种）', desc:'拔牙当天植入种植体，减少就诊次数与等待周期', price:2000 },
+  { id:'bonegraft', name:'🦴 骨增量（植骨）', desc:'骨量不足患者的必备术式，为种植体打好地基', price:3000 },
+  { id:'sinus', name:'🔼 上颌窦提升', desc:'上颌后牙区骨高度不足时的必要术式', price:3000 },
+  { id:'sedation', name:'😴 静脉镇静（舒适化治疗）', desc:'全程浅眠状态，无恐惧感，醒来已完成手术', price:800 },
+  { id:'aftercare', name:'💊 术后修复护理套装', desc:'含医用漱口水、冰敷袋、护理指南，加速愈合', price:298 }
+];
+var productWarrantyOpts = [
+  { id:'pw5', label:'基础5年产品质保', badge:'含', price:0 },
+  { id:'pw10', label:'延长至10年产品质保', badge:'推荐', price:800 },
+  { id:'pwlife', label:'终身产品质保', badge:'顶配', price:2000 }
+];
+var medicalWarrantyOpts = [
+  { id:'mw1', label:'基础1年医疗质保', badge:'含', price:0 },
+  { id:'mw3', label:'延长至3年医疗质保', badge:'推荐', price:1500 },
+  { id:'mw5', label:'延长至5年医疗质保', badge:'顶配', price:2500 }
+];
+var TEXT_CONFIG = {
+  policyBanner: '国家集采 · 耗材0差价  |  医疗服务分级调控价\n产品价格与国家集采目录一致，技术服务按国家指导价执行',
+  productDesc: '植体+配件+牙冠，价格与国家集采目录一致，门诊不加一分钱',
+  techDesc: '选医生 → 选方案 → 选附加术式，按国家分级调控定价',
+  warrantyDesc: '产品质保 + 医疗质保，自由选择保障时长',
+  trustBar: '医疗质保承诺：医生技术原因导致失败，技术服务费全额退还，免费重做',
+  receiptFooter: '到院出示方案单，享免费CBCT检查',
+  qrHint: '扫码预约'
+};
+</script>
+<style>
+:root {
+  --bg: #F5F0EB;
+  --card: #FFFFFF;
+  --primary: #1A7A7A;
+  --primary-light: #E8F4F4;
+  --accent: #D4956B;
+  --accent-light: #FDF6F0;
+  --text: #2C3E50;
+  --text-light: #7F8C8D;
+  --text-lighter: #B0B8B9;
+  --price: #E17055;
+  --border: #E8E3DD;
+  --success: #27AE60;
+  --success-light: #E8F8EF;
+  --policy-blue: #2B6CB0;
+  --policy-blue-bg: #EBF4FD;
+  --policy-green: #1A7A3A;
+  --policy-green-bg: #E8F8EF;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  background: #E8E3DD;
+  display: flex; justify-content: center; align-items: flex-start;
+  min-height: 100vh; padding: 20px 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.phone-frame {
+  width: 420px; max-width: 100vw;
+  background: var(--bg);
+  border-radius: 24px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+/* Status Bar */
+.status-bar {
+  height: 44px; background: var(--primary);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; color: white; font-size: 12px; font-weight: 500;
+}
+.status-bar .time { font-weight: 600; }
+
+/* Header */
+.app-header {
+  background: linear-gradient(135deg, #1A7A7A 0%, #156060 100%);
+  padding: 18px 24px 22px; color: white; position: relative; overflow: hidden;
+}
+.app-header::after {
+  content: ''; position: absolute; top: -40px; right: -30px;
+  width: 140px; height: 140px; background: rgba(255,255,255,0.04); border-radius: 50%;
+}
+.app-header .clinic-name { font-size: 12px; opacity: 0.8; letter-spacing: 2px; margin-bottom: 4px; }
+.app-header h1 { font-size: 24px; font-weight: 700; letter-spacing: 1px; line-height: 1.3; position: relative; z-index: 1; }
+.app-header .subtitle { font-size: 13px; opacity: 0.75; margin-top: 4px; position: relative; z-index: 1; }
+
+/* Policy Banner */
+.policy-banner {
+  background: linear-gradient(135deg, #EBF4FD 0%, #F0F7FF 100%);
+  margin: 14px 20px 0; padding: 12px 16px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 10px;
+  border:1px solid rgba(43,108,176,0.12);
+  box-shadow: 0 2px 8px rgba(43,108,176,0.06);
+}
+.policy-banner .pb-icon { font-size: 20px; flex-shrink: 0; }
+.policy-banner .pb-text { font-size: 12px; color: var(--policy-blue); line-height: 1.5; font-weight: 500; }
+.policy-banner .pb-text strong { color: #1D4ED8; }
+
+/* Policy Tag */
+.policy-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 4px; letter-spacing: 0.5px;
+  margin-left: 4px; vertical-align: middle;
+}
+.policy-tag.procurement { background: var(--policy-blue-bg); color: var(--policy-blue); }
+.policy-tag.zero { background: var(--policy-green-bg); color: var(--policy-green); }
+.policy-tag.regulation { background: #FDF6F0; color: #B87040; }
+
+/* Main Content */
+.main-content { padding: 14px 20px; padding-bottom: 130px; }
+
+/* Section */
+.section { margin-bottom: 22px; }
+.section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.section-step {
+  width: 28px; height: 28px; background: var(--primary); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+.section-title { font-size: 17px; font-weight: 700; color: var(--text); }
+.section-desc { font-size: 12px; color: var(--text-light); margin-bottom: 10px; padding-left: 38px; }
+
+/* Sub Section Label */
+.sub-label {
+  font-size: 12px; font-weight: 600; color: var(--text-light); letter-spacing: 1px;
+  margin: 12px 0 8px 38px; display: flex; align-items: center; gap: 6px;
+}
+.sub-label::before { content: ''; width: 4px; height: 14px; background: var(--accent); border-radius: 2px; }
+
+/* Horizontal Scroll Cards */
+.scroll-row {
+  display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 6px 38px;
+  scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.scroll-row::-webkit-scrollbar { display:none; }
+
+.choice-card {
+  min-width: 148px; background: var(--card); border-radius: var(--radius);
+  padding: 14px 12px; border: 2px solid transparent; cursor: pointer;
+  transition: all var(--transition); box-shadow: var(--shadow);
+  position: relative; display: flex; flex-direction: column; gap: 4px;
+  user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.choice-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.choice-card.selected {
+  border-color: var(--primary); background: var(--primary-light);
+  transform: translateY(-2px); box-shadow: 0 4px 20px rgba(26,122,122,0.15);
+}
+.choice-card.selected.crown-card { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 4px 20px rgba(212,149,107,0.15); }
+
+.choice-card .check-badge {
+  position: absolute; top: 8px; right: 8px;
+  width: 20px; height: 20px; background: var(--primary); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: scale(0.5); transition: all var(--transition);
+}
+.choice-card.selected .check-badge { opacity:1; transform:scale(1); }
+.choice-card.selected.crown-card .check-badge { background: var(--accent); }
+.choice-card .check-badge svg { width:11px; height:11px; fill:white; }
+
+.choice-card .card-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800;
+}
+.choice-card .card-icon.implant { background: linear-gradient(135deg, #E8F4F4, #D5EBEB); color: var(--primary); }
+.choice-card .card-icon.crown { background: linear-gradient(135deg, #FDF6F0, #F8EBDE); color: var(--accent); }
+
+.choice-card .card-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.choice-card .card-sub { font-size: 10px; color: var(--text-light); }
+.choice-card .card-feat { font-size: 10px; color: var(--text-light); line-height: 1.4; }
+.choice-card .card-price { font-size: 17px; font-weight: 700; color: var(--price); margin-top: 2px; }
+.choice-card .card-price span { font-size: 11px; font-weight: 500; }
+.choice-card .card-tags { display: flex; gap: 4px; margin-top: 2px; flex-wrap: wrap; }
+
+/* Tech Cards */
+.tech-list { display: flex; flex-direction: column; gap: 8px; padding-left: 38px; }
+
+.tech-card {
+  background: var(--card); border-radius: var(--radius-sm); padding: 14px 16px;
+  border: 2px solid transparent; cursor: pointer; transition: all var(--transition);
+  box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px;
+  user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.tech-card:hover { box-shadow: var(--shadow-lg); }
+.tech-card.selected { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 4px 20px rgba(26,122,122,0.12); }
+.tech-card .radio-circle {
+  width: 20px; height: 20px; border: 2px solid #D0D5D6; border-radius: 50%;
+  flex-shrink: 0; transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.tech-card.selected .radio-circle { border-color: var(--primary); background: var(--primary); }
+.tech-card.selected .radio-circle::after { content: ''; width: 7px; height: 7px; background: white; border-radius: 50%; }
+.tech-card .tech-info { flex:1; min-width:0; }
+.tech-card .tech-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.tech-card .tech-desc { font-size: 11px; color: var(--text-light); margin-top: 1px; line-height: 1.4; }
+.tech-card .tech-price { font-size: 16px; font-weight: 700; color: var(--price); flex-shrink: 0; }
+.tech-card .tech-price span { font-size: 10px; font-weight: 500; }
+
+/* Doctor Cards */
+.doctor-cards { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 6px 38px; scrollbar-width: none; }
+.doctor-cards::-webkit-scrollbar { display:none; }
+
+/* Toggle Row */
+.toggle-row {
+  display: flex; align-items: center; gap: 10px;
+  margin: 8px 0 0 38px; padding: 10px 14px;
+  background: var(--card); border-radius: var(--radius-xs);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03); cursor: pointer;
+  transition: all var(--transition); user-select: none;
+  -webkit-tap-highlight-color: transparent; border:1.5px solid transparent;
+}
+.toggle-row.active { border-color: rgba(26,122,122,0.25); background: #FAFDFD; }
+.toggle-row .toggle-info { flex:1; }
+.toggle-row .toggle-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.toggle-row .toggle-desc { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+.toggle-row .toggle-price { font-size: 15px; font-weight: 700; color: var(--price); flex-shrink: 0; margin-right: 4px; }
+.toggle-switch {
+  width: 44px; height: 26px; background: #D0D5D6; border-radius: 13px;
+  flex-shrink: 0; position: relative; transition: all var(--transition);
+}
+.toggle-switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 22px; height: 22px; background: white; border-radius: 50%;
+  transition: all var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.toggle-row.active .toggle-switch { background: var(--primary); }
+.toggle-row.active .toggle-switch::after { left: 20px; }
+
+/* Addon List */
+.addon-list { display: flex; flex-direction: column; gap: 6px; padding-left: 38px; }
+.addon-item {
+  background: var(--card); border-radius: var(--radius-sm); padding: 12px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03); display: flex; align-items: center;
+  gap: 10px; cursor: pointer; transition: all var(--transition);
+  user-select: none; -webkit-tap-highlight-color: transparent;
+  border:1.5px solid transparent;
+}
+.addon-item:hover { box-shadow: var(--shadow); }
+.addon-item.active { border-color: rgba(26,122,122,0.25); background: #FAFDFD; }
+.addon-item .addon-emoji { font-size: 17px; width: 34px; text-align: center; flex-shrink: 0; }
+.addon-info { flex:1; min-width:0; }
+.addon-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.addon-desc { font-size: 10px; color: var(--text-light); margin-top: 1px; }
+.addon-price { font-size: 15px; font-weight: 700; color: var(--price); flex-shrink: 0; }
+.addon-toggle {
+  width: 44px; height: 26px; background: #D0D5D6; border-radius: 13px;
+  flex-shrink: 0; position: relative; transition: all var(--transition);
+}
+.addon-toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 22px; height: 22px; background: white; border-radius: 50%;
+  transition: all var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.addon-item.active .addon-toggle { background: var(--primary); }
+.addon-item.active .addon-toggle::after { left: 20px; }
+
+/* Warranty */
+.warranty-grid { display: flex; flex-direction: column; gap: 10px; padding-left: 38px; }
+.warranty-block {
+  background: var(--card); border-radius: var(--radius-sm);
+  padding: 14px 16px; box-shadow: var(--shadow);
+}
+.warranty-block .wb-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  font-size: 14px; font-weight: 700; color: var(--text);
+}
+.warranty-block .wb-header .wb-icon { font-size: 18px; }
+.warranty-options { display: flex; flex-direction: column; gap: 4px; }
+.warranty-option {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  border-radius: var(--radius-xs); cursor: pointer; transition: all var(--transition);
+  border:1.5px solid transparent; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.warranty-option:hover { background: #F8F8F6; }
+.warranty-option.selected { border-color: var(--accent); background: var(--accent-light); }
+.warranty-option .wo-radio {
+  width: 18px; height: 18px; border: 2px solid #D0D5D6; border-radius: 50%;
+  flex-shrink: 0; transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.warranty-option.selected .wo-radio { border-color: var(--accent); background: var(--accent); }
+.warranty-option.selected .wo-radio::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
+.warranty-option .wo-label { flex:1; font-size: 13px; color: var(--text); font-weight: 500; }
+.warranty-option .wo-badge {
+  font-size: 10px; padding: 1px 6px; border-radius: 3px;
+  background: var(--success-light); color: var(--success); font-weight: 600;
+}
+.warranty-option .wo-price { font-size: 14px; font-weight: 700; color: var(--price); flex-shrink:0; }
+
+/* Trust Bar */
+.trust-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; margin: 0 20px 4px;
+  background: var(--success-light); border-radius: var(--radius-xs);
+  font-size: 12px; color: var(--success); font-weight: 500;
+}
+.trust-bar svg { width:16px; height:16px; fill:var(--success); flex-shrink:0; }
+
+/* Bottom Bar */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 420px; max-width: 100vw; background: white;
+  border-radius: 20px 20px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  padding: 14px 20px 18px; z-index: 100; transition: all var(--transition);
+}
+.price-breakdown { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
+.price-col { display: flex; flex-direction: column; gap: 4px; }
+.price-row-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-light); }
+.price-row-item .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.price-row-item .dot.d1 { background: var(--policy-blue); }
+.price-row-item .dot.d2 { background: var(--accent); }
+.price-row-item .dot.d3 { background: #8E6BB8; }
+.price-row-item .val { font-weight: 600; color: var(--text); margin-left: auto; }
+.price-total-col { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
+.price-total-col .total-label { font-size: 10px; color: var(--text-light); }
+.price-total-col .total-num { font-size: 24px; font-weight: 800; color: var(--price); line-height: 1; transition: all 0.15s ease; }
+
+.action-buttons { display: flex; gap: 8px; }
+.btn-outline {
+  flex: 1; padding: 11px; border: 1.5px solid var(--primary);
+  background: white; color: var(--primary); border-radius: var(--radius-xs);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all var(--transition); text-align: center;
+}
+.btn-outline:hover { background: var(--primary-light); }
+.btn-primary {
+  flex: 1.5; padding: 11px; border: none;
+  background: linear-gradient(135deg, #1A7A7A 0%, #156060 100%);
+  color: white; border-radius: var(--radius-xs); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all var(--transition); text-align: center;
+  box-shadow: 0 4px 14px rgba(26,122,122,0.3);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,122,122,0.4); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary.disabled { opacity: 0.5; pointer-events: none; box-shadow: none; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity var(--transition);
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+.modal-sheet {
+  background: white; border-radius: 20px; width: 90%; max-width: 380px;
+  max-height: 85vh; overflow-y: auto; padding: 26px 22px; position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  transform: translateY(30px); transition: transform var(--transition);
+}
+.modal-overlay.show .modal-sheet { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 30px; height: 30px; background: #F5F5F5; border: none;
+  border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 16px; color: var(--text-light);
+  transition: all var(--transition);
+}
+.modal-close:hover { background: #E8E8E8; }
+.receipt-header { text-align: center; padding-bottom: 18px; border-bottom: 2px dashed var(--border); margin-bottom: 18px; }
+.receipt-header .clinic { font-size: 17px; font-weight: 700; color: var(--text); }
+.receipt-header .label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.receipt-header .date { font-size: 11px; color: var(--text-lighter); margin-top: 2px; }
+.receipt-section { margin-bottom: 14px; }
+.receipt-section .section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.receipt-section .section-label .sl-tag {
+  font-size: 9px; padding: 1px 5px; border-radius: 3px; letter-spacing: 0;
+  font-weight: 500;
+}
+.sl-tag.procurement { background: var(--policy-blue-bg); color: var(--policy-blue); }
+.sl-tag.regulation { background: #FDF6F0; color: #B87040; }
+.sl-tag.warranty { background: #F3EFF9; color: #8E6BB8; }
+.receipt-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; font-size: 13px;
+}
+.receipt-item .item-name { color: var(--text); font-weight: 500; flex:1; }
+.receipt-item .item-price { font-weight: 600; color: var(--text); flex-shrink:0; }
+.receipt-divider { border: none; border-top: 1px dashed var(--border); margin: 12px 0; }
+.receipt-total { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 700; color: var(--text); padding: 6px 0; }
+.receipt-total .total-price { font-size: 22px; color: var(--price); font-weight: 800; }
+.receipt-guarantee {
+  background: var(--success-light); border-radius: 10px; padding: 10px 12px;
+  margin-top: 14px; display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--success); line-height: 1.5; font-weight: 500;
+}
+.receipt-guarantee svg { width:18px; height:18px; fill:var(--success); flex-shrink:0; }
+.receipt-qr { text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.receipt-qr .qr-box {
+  width: 90px; height: 90px; background: #F5F5F5; border-radius: 10px;
+  margin: 0 auto 6px; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--text-lighter);
+}
+.receipt-qr .qr-hint { font-size: 10px; color: var(--text-light); }
+
+/* Toast */
+.toast {
+  position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px);
+  background: var(--text); color: white; padding: 9px 22px; border-radius: 20px;
+  font-size: 13px; font-weight: 500; z-index: 300; opacity: 0;
+  transition: all 0.3s ease; pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+.price-pulse { animation: pulse 0.3s ease; }
+
+@media (max-width: 440px) {
+  .phone-frame { border-radius: 0; }
+  .bottom-bar { border-radius: 16px 16px 0 0; }
+  .choice-card { min-width: 135px; }
+}
+</style>
+</head>
+<body>
+
+<div class="phone-frame" id="app">
+  <div class="status-bar">
+    <span class="time">16:30</span>
+    <span style="font-size:11px;opacity:0.8;" id="statusClinic">诗韵口腔 · 种植中心</span>
+  </div>
+
+  <div class="app-header">
+    <div class="clinic-name" id="hdrSubtitle">自由搭配 · 透明定价</div>
+    <h1 id="hdrTitle">选择您的<br>种植方案</h1>
+    <div class="subtitle" id="hdrSubtitle2">产品 · 技术服务 · 质保 — 三大项自由组合</div>
+  </div>
+
+  <!-- Policy Banner -->
+  <div class="policy-banner">
+    <div class="pb-icon">📋</div>
+    <div class="pb-text" id="policyBanner">
+      <strong>国家集采 · 耗材0差价</strong> &nbsp;|&nbsp; <strong>医疗服务分级调控价</strong><br>产品价格与国家集采目录一致，技术服务按国家指导价执行
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- ========== 第一部分：产品 ========== -->
+    <div class="section" id="sec-product">
+      <div class="section-header">
+        <div class="section-step">1</div>
+        <div class="section-title">产品选择 <span class="policy-tag procurement">国家集采</span><span class="policy-tag zero">0差价</span></div>
+      </div>
+      <div class="section-desc" id="descProduct">植体+配件+牙冠，价格与国家集采目录一致，门诊不加一分钱</div>
+
+      <!-- 种植体系统 -->
+      <div class="sub-label">① 种植体系统（含基台等配件）</div>
+      <div class="scroll-row" id="implantRow"></div>
+
+      <!-- 牙冠 -->
+      <div class="sub-label">② 牙冠</div>
+      <div class="scroll-row" id="crownRow"></div>
+    </div>
+
+    <!-- ========== 第二部分：医疗技术服务 ========== -->
+    <div class="section" id="sec-technique">
+      <div class="section-header">
+        <div class="section-step">2</div>
+        <div class="section-title">医疗技术服务 <span class="policy-tag regulation">分级调控价</span></div>
+      </div>
+      <div class="section-desc" id="descTech">选医生 → 选方案 → 选附加术式，按国家分级调控定价</div>
+
+      <!-- 选择医生 -->
+      <div class="sub-label">选择主刀医生</div>
+      <div class="doctor-cards" id="doctorRow"></div>
+
+      <!-- 种植方案 -->
+      <div class="sub-label" style="margin-top:16px;">种植方案（在医生基础费上叠加）</div>
+      <div class="tech-list" id="techList"></div>
+
+      <!-- 即刻种植 Toggle -->
+      <div class="sub-label">附加术式</div>
+      <div class="toggle-row" id="toggleImmediate" onclick="toggleImmediate()">
+        <div class="toggle-info">
+          <div class="toggle-name" id="immediateName">⚡ 即刻种植（即拔即种）</div>
+          <div class="toggle-desc" id="immediateDesc">拔牙当天植入种植体，减少就诊次数与等待周期</div>
+        </div>
+        <div class="toggle-price" id="immediatePrice"></div>
+        <div class="toggle-switch"></div>
+      </div>
+
+      <!-- 其他附加术式 -->
+      <div class="addon-list" id="addonList"></div>
+    </div>
+
+    <!-- ========== 第三部分：质保 ========== -->
+    <div class="section" id="sec-warranty">
+      <div class="section-header">
+        <div class="section-step">3</div>
+        <div class="section-title">质保方案</div>
+      </div>
+      <div class="section-desc" id="descWarranty">产品质保 + 医疗质保，自由选择保障时长</div>
+
+      <div class="warranty-grid" id="warrantyGrid"></div>
+    </div>
+
+    <!-- Trust Bar -->
+    <div class="trust-bar" id="trustBar">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      <span>医疗质保承诺：医生技术原因导致失败，<strong>技术服务费全额退还，免费重做</strong></span>
+    </div>
+
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bottom-bar" id="bottomBar">
+    <div class="price-breakdown">
+      <div class="price-col">
+        <div class="price-row-item"><span class="dot d1"></span>产品费（集采价）<span class="val" id="priceProduct">¥0</span></div>
+        <div class="price-row-item"><span class="dot d2"></span>技术服务费（调控价）<span class="val" id="priceTech">¥0</span></div>
+        <div class="price-row-item"><span class="dot d3"></span>质保费<span class="val" id="priceWarranty">¥0</span></div>
+      </div>
+      <div class="price-total-col">
+        <div class="total-label">参考总价</div>
+        <div class="total-num" id="priceTotal">¥0</div>
+      </div>
+    </div>
+    <div class="action-buttons">
+      <button class="btn-outline" onclick="resetAll()">重新选择</button>
+      <button class="btn-primary disabled" id="btnConfirm" onclick="showReceipt()">生成方案单</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Receipt Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="receipt-header">
+      <div class="clinic" id="receiptClinic">诗韵口腔 · 种植方案单</div>
+      <div class="label">您的个性化种植方案</div>
+      <div class="date" id="receiptDate"></div>
+    </div>
+    <div id="receiptContent"></div>
+    <div class="receipt-guarantee">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      <span>医疗质保承诺：如因医生技术原因导致种植失败，<strong>技术服务费全额退还</strong>，免费重做。</span>
+    </div>
+    <div class="receipt-qr">
+      <div class="qr-box">📱<br>扫码预约</div>
+      <div class="qr-hint" id="qrHint">到院出示方案单，享免费CBCT检查</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 配置加载（支持 localStorage 预览模式） ====================
+(function loadPreviewConfig() {
+  // config.js 已通过 <script src> 加载，变量（var）已挂到 window
+  // 预览模式：用 localStorage 中的配置覆盖
+  try {
+    const preview = localStorage.getItem('previewConfig');
+    if (preview) {
+      const d = JSON.parse(preview);
+      if (d.CLINIC_CONFIG) window.CLINIC_CONFIG = d.CLINIC_CONFIG;
+      if (d.implants) window.implants = d.implants;
+      if (d.crowns) window.crowns = d.crowns;
+      if (d.doctors) window.doctors = d.doctors;
+      if (d.techniques) window.techniques = d.techniques;
+      if (d.addons) window.addons = d.addons;
+      if (d.productWarrantyOpts) window.productWarrantyOpts = d.productWarrantyOpts;
+      if (d.medicalWarrantyOpts) window.medicalWarrantyOpts = d.medicalWarrantyOpts;
+    }
+  } catch(e) { console.warn('预览配置加载失败', e); }
+})();
+
+// ==================== 数据源（统一从这里读） ====================
+function C(key) { return window[key]; }
+
+// ==================== 动态渲染诊所信息 ====================
+(function applyClinicConfig() {
+  const c = C('CLINIC_CONFIG') || {};
+  const t = C('TEXT_CONFIG') || {};
+  // 状态栏
+  const s = document.getElementById('statusClinic');
+  if (s) s.textContent = (c.name || '诗韵口腔') + ' · 种植中心';
+  // 头部
+  const hdr1 = document.getElementById('hdrSubtitle');
+  if (hdr1) hdr1.textContent = c.subtitle || '';
+  const hdr2 = document.getElementById('hdrTitle');
+  if (hdr2 && c.headerTitle) hdr2.innerHTML = c.headerTitle.replace(/\n/g, '<br>');
+  const hdr3 = document.getElementById('hdrSubtitle2');
+  if (hdr3 && c.headerSubtitle) hdr3.textContent = c.headerSubtitle;
+  // 页面文案
+  if (t.policyBanner) {
+    const el = document.getElementById('policyBanner');
+    if (el) el.innerHTML = t.policyBanner.replace(/\n/g, '<br>');
+  }
+  if (t.productDesc) {
+    const el = document.getElementById('descProduct');
+    if (el) el.textContent = t.productDesc;
+  }
+  if (t.techDesc) {
+    const el = document.getElementById('descTech');
+    if (el) el.textContent = t.techDesc;
+  }
+  if (t.warrantyDesc) {
+    const el = document.getElementById('descWarranty');
+    if (el) el.textContent = t.warrantyDesc;
+  }
+  if (t.trustBar) {
+    const el = document.getElementById('trustBar');
+    if (el) el.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg><span>' + t.trustBar + '</span>';
+  }
+  if (t.receiptFooter) {
+    const el = document.getElementById('qrHint');
+    if (el) el.textContent = t.receiptFooter;
+  }
+})();
+
+// ==================== STATE ====================
+let selectedImplant = null;
+let selectedCrown = null;
+let selectedDoctor = null;
+let selectedTechnique = null;
+let immediateImplant = false;
+let selectedAddons = new Set();
+let selectedProductWarranty = null;
+let selectedMedicalWarranty = null;
+
+// ==================== 初始化默认选择 ====================
+(function initDefaults() {
+  const pw = C('productWarrantyOpts');
+  if (pw && pw.length > 0) selectedProductWarranty = pw[0].id;
+  const mw = C('medicalWarrantyOpts');
+  if (mw && mw.length > 0) selectedMedicalWarranty = mw[0].id;
+})();
+
+// ==================== RENDER ====================
+function renderImplants() {
+  const data = C('implants') || [];
+  const c = document.getElementById('implantRow');
+  c.innerHTML = data.map(b => `
+    <div class="choice-card ${selectedImplant===b.id?'selected':''}" onclick="selectImplant('${b.id}')">
+      <div class="check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+      <div class="card-icon implant">${b.icon||''}</div>
+      <div class="card-name">${b.name||''}</div>
+      <div class="card-sub">${(b.origin||'') + ' · ' + (b.brand||'')}</div>
+      <div class="card-feat">${b.feat||''}</div>
+      <div class="card-price">¥${(b.price||0).toLocaleString()} <span>/颗</span></div>
+      <div class="card-tags"><span class="policy-tag procurement">国家集采</span><span class="policy-tag zero">0差价</span></div>
+    </div>
+  `).join('');
+}
+
+function renderCrowns() {
+  const data = C('crowns') || [];
+  const c = document.getElementById('crownRow');
+  c.innerHTML = data.map(cr => `
+    <div class="choice-card crown-card ${selectedCrown===cr.id?'selected':''}" onclick="selectCrown('${cr.id}')">
+      <div class="check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+      <div class="card-icon crown">${cr.icon||''}</div>
+      <div class="card-name">${cr.name||''}</div>
+      <div class="card-sub">${(cr.origin||'') + ' · ' + (cr.brand||'')}</div>
+      <div class="card-feat">${cr.feat||''}</div>
+      <div class="card-price">¥${(cr.price||0).toLocaleString()} <span>/颗</span></div>
+      <div class="card-tags"><span class="policy-tag procurement">国家集采</span><span class="policy-tag zero">0差价</span></div>
+    </div>
+  `).join('');
+}
+
+function renderDoctors() {
+  const data = C('doctors') || [];
+  const c = document.getElementById('doctorRow');
+  c.innerHTML = data.map(d => {
+    const titleColor = d.title && d.title.indexOf('主任')>=0 ? '#1A7A7A' : (d.title && d.title.indexOf('副主任')>=0 ? '#D4956B' : '#7F8C8D');
+    return `
+    <div class="choice-card ${selectedDoctor===d.id?'selected':''}" onclick="selectDoctor('${d.id}')" style="min-width:170px;">
+      <div class="check-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary-light),var(--primary));color:white;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;">${d.avatar||d.name?.[0]||''}</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);">${d.name||''}</div>
+          <div style="font-size:10px;font-weight:600;color:${titleColor};">${d.title||''}</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text-light);margin-top:4px;">从业${(d.years||0)}年 · 种植${(d.cases||0).toLocaleString()}+例</div>
+      <div style="font-size:10px;color:var(--text-light);line-height:1.4;">擅长：${d.spec||''}</div>
+      <div style="font-size:16px;font-weight:700;color:var(--price);margin-top:4px;">基础费 ¥${(d.baseFee||0).toLocaleString()} <span style="font-size:10px;font-weight:500;">/颗</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderTechniques() {
+  const data = C('techniques') || [];
+  const c = document.getElementById('techList');
+  c.innerHTML = data.map(t => {
+    const priceLabel = (t.price===0 || !t.price) ? '<span style="color:var(--success);font-weight:600;font-size:14px;">已含</span>' : `<span style="color:var(--price);">+¥${(t.price||0).toLocaleString()}</span>`;
+    return `
+    <div class="tech-card ${selectedTechnique===t.id?'selected':''}" onclick="selectTechnique('${t.id}')">
+      <div class="radio-circle"></div>
+      <div class="tech-info">
+        <div class="tech-name">${t.name||''}</div>
+        <div class="tech-desc">${t.desc||''}</div>
+      </div>
+      <div class="tech-price">${priceLabel} <span>/颗</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderAddons() {
+  const data = (C('addons') || []).filter(a => a.id !== 'immediate');
+  const c = document.getElementById('addonList');
+  c.innerHTML = data.map(a => `
+    <div class="addon-item ${selectedAddons.has(a.id)?'active':''}" onclick="toggleAddon('${a.id}')">
+      <div class="addon-info">
+        <div class="addon-name">${a.name||''}</div>
+        <div class="addon-desc">${a.desc||''}</div>
+      </div>
+      <div class="addon-price">+¥${(a.price||0).toLocaleString()}</div>
+      <div class="addon-toggle"></div>
+    </div>
+  `).join('');
+}
+
+function renderWarranty() {
+  const pwOpts = C('productWarrantyOpts') || [];
+  const mwOpts = C('medicalWarrantyOpts') || [];
+  const c = document.getElementById('warrantyGrid');
+  c.innerHTML = `
+    <div class="warranty-block">
+      <div class="wb-header"><span class="wb-icon">🛡️</span>产品质保</div>
+      <div class="warranty-options">
+        ${pwOpts.map(o => `
+          <div class="warranty-option ${selectedProductWarranty===o.id?'selected':''}" onclick="selectProductWarranty('${o.id}')">
+            <div class="wo-radio"></div>
+            <span class="wo-label">${o.label||''}</span>
+            <span class="wo-badge">${o.badge||''}</span>
+            <span class="wo-price">${o.price===0?'已含':'+¥'+(o.price||0).toLocaleString()}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="warranty-block">
+      <div class="wb-header"><span class="wb-icon">🏥</span>医疗质保</div>
+      <div class="warranty-options">
+        ${mwOpts.map(o => `
+          <div class="warranty-option ${selectedMedicalWarranty===o.id?'selected':''}" onclick="selectMedicalWarranty('${o.id}')">
+            <div class="wo-radio"></div>
+            <span class="wo-label">${o.label||''}</span>
+            <span class="wo-badge">${o.badge||''}</span>
+            <span class="wo-price">${o.price===0?'已含':'+¥'+(o.price||0).toLocaleString()}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ==================== 即刻种植动态文案 ====================
+(function initImmediate() {
+  const data = C('addons') || [];
+  const imm = data.find(a => a.id === 'immediate');
+  if (imm) {
+    const n = document.getElementById('immediateName');
+    if (n) n.textContent = imm.name || '即刻种植（即拔即种）';
+    const d = document.getElementById('immediateDesc');
+    if (d && imm.desc) d.textContent = imm.desc;
+    const p = document.getElementById('immediatePrice');
+    if (p) p.textContent = '+' + (imm.price||0).toLocaleString();
+  }
+})();
+
+// ==================== ACTIONS ====================
+function selectImplant(id) { selectedImplant = selectedImplant===id?null:id; renderImplants(); update(); }
+function selectCrown(id) { selectedCrown = selectedCrown===id?null:id; renderCrowns(); update(); }
+function selectDoctor(id) { selectedDoctor = selectedDoctor===id?null:id; renderDoctors(); update(); }
+function selectTechnique(id) { selectedTechnique = selectedTechnique===id?null:id; renderTechniques(); update(); }
+
+function toggleImmediate() {
+  immediateImplant = !immediateImplant;
+  document.getElementById('toggleImmediate').classList.toggle('active', immediateImplant);
+  update();
+}
+
+function toggleAddon(id) {
+  selectedAddons.has(id) ? selectedAddons.delete(id) : selectedAddons.add(id);
+  renderAddons(); update();
+}
+
+function selectProductWarranty(id) { selectedProductWarranty = id; renderWarranty(); update(); }
+function selectMedicalWarranty(id) { selectedMedicalWarranty = id; renderWarranty(); update(); }
+
+// ==================== PRICE ====================
+function getProductPrice() {
+  let p = 0;
+  const data = C('implants') || [];
+  if (selectedImplant) { const b = data.find(x=>x.id===selectedImplant); if(b) p += b.price||0; }
+  const crowns = C('crowns') || [];
+  if (selectedCrown) { const c = crowns.find(x=>x.id===selectedCrown); if(c) p += c.price||0; }
+  return p;
+}
+
+function getTechPrice() {
+  let p = 0;
+  const docs = C('doctors') || [];
+  if (selectedDoctor) { const d = docs.find(x=>x.id===selectedDoctor); if(d) p += d.baseFee||0; }
+  const techs = C('techniques') || [];
+  if (selectedTechnique) { const t = techs.find(x=>x.id===selectedTechnique); if(t) p += t.price||0; }
+  if (immediateImplant) {
+    const data = C('addons') || [];
+    const imm = data.find(a=>a.id==='immediate');
+    if (imm) p += imm.price||0;
+  }
+  (C('addons')||[]).forEach(a => {
+    if (selectedAddons.has(a.id) && a.id !== 'immediate') p += a.price||0;
+  });
+  return p;
+}
+
+function getWarrantyPrice() {
+  let p = 0;
+  const pwOpts = C('productWarrantyOpts') || [];
+  const pw = pwOpts.find(o=>o.id===selectedProductWarranty);
+  if (pw) p += pw.price||0;
+  const mwOpts = C('medicalWarrantyOpts') || [];
+  const mw = mwOpts.find(o=>o.id===selectedMedicalWarranty);
+  if (mw) p += mw.price||0;
+  return p;
+}
+
+function update() {
+  const pp = getProductPrice();
+  const tp = getTechPrice();
+  const wp = getWarrantyPrice();
+  document.getElementById('priceProduct').textContent = '¥'+pp.toLocaleString();
+  document.getElementById('priceTech').textContent = '¥'+tp.toLocaleString();
+  document.getElementById('priceWarranty').textContent = '¥'+wp.toLocaleString();
+  const totalEl = document.getElementById('priceTotal');
+  totalEl.textContent = '¥'+(pp+tp+wp).toLocaleString();
+  totalEl.classList.remove('price-pulse'); void totalEl.offsetWidth; totalEl.classList.add('price-pulse');
+  const btn = document.getElementById('btnConfirm');
+  if (selectedImplant && selectedDoctor && selectedTechnique) btn.classList.remove('disabled');
+  else btn.classList.add('disabled');
+}
+
+function resetAll() {
+  selectedImplant=null; selectedCrown=null; selectedDoctor=null; selectedTechnique=null;
+  immediateImplant=false; selectedAddons=new Set();
+  const pw = C('productWarrantyOpts'); if (pw && pw.length>0) selectedProductWarranty=pw[0].id;
+  const mw = C('medicalWarrantyOpts'); if (mw && mw.length>0) selectedMedicalWarranty=mw[0].id;
+  renderImplants(); renderCrowns(); renderDoctors(); renderTechniques(); renderAddons(); renderWarranty();
+  document.getElementById('toggleImmediate').classList.remove('active');
+  update(); showToast('已重置所有选择');
+}
+
+// ==================== RECEIPT ====================
+function showReceipt() {
+  if (!selectedImplant || !selectedDoctor || !selectedTechnique) { showToast('请至少选择种植体、医生和种植方案'); return; }
+  const implants = C('implants') || [];
+  const crowns = C('crowns') || [];
+  const doctors = C('doctors') || [];
+  const techniques = C('techniques') || [];
+  const addonsAll = C('addons') || [];
+  const pwOpts = C('productWarrantyOpts') || [];
+  const mwOpts = C('medicalWarrantyOpts') || [];
+
+  const implant = implants.find(b=>b.id===selectedImplant);
+  const crown = crowns.find(c=>c.id===selectedCrown);
+  const doctor = doctors.find(d=>d.id===selectedDoctor);
+  const tech = techniques.find(t=>t.id===selectedTechnique);
+  const addonItems = Array.from(selectedAddons).map(id=>addonsAll.find(a=>a.id===id)).filter(Boolean);
+  const pw = pwOpts.find(o=>o.id===selectedProductWarranty);
+  const mw = mwOpts.find(o=>o.id===selectedMedicalWarranty);
+
+  const pp = getProductPrice(); const tp = getTechPrice(); const wp = getWarrantyPrice();
+  const now = new Date();
+  document.getElementById('receiptDate').textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日';
+
+  const c = C('CLINIC_CONFIG') || {};
+  document.getElementById('receiptClinic').textContent = (c.name||'诗韵口腔') + ' · 种植方案单';
+
+  let html = '';
+  // 产品
+  html += `<div class="receipt-section">
+    <div class="section-label">▎产品 <span class="sl-tag procurement">国家集采·0差价</span></div>`;
+  if (implant) html += `<div class="receipt-item"><span class="item-name">${implant.name||''} ${implant.brand||''}</span><span class="item-price">¥${(implant.price||0).toLocaleString()}</span></div>`;
+  if (crown) html += `<div class="receipt-item"><span class="item-name">${crown.name||''} (${crown.brand||''})</span><span class="item-price">¥${(crown.price||0).toLocaleString()}</span></div>`;
+  html += `</div>`;
+  // 技术服务
+  html += `<div class="receipt-section">
+    <div class="section-label">▎医疗技术服务 <span class="sl-tag regulation">分级调控价</span></div>`;
+  if (doctor) html += `<div class="receipt-item"><span class="item-name">主刀医生：${doctor.name||''} ${doctor.title||''}（从业${doctor.years||0}年）</span><span class="item-price">¥${(doctor.baseFee||0).toLocaleString()}</span></div>`;
+  if (tech) html += `<div class="receipt-item"><span class="item-name">　└ ${tech.name||''}</span><span class="item-price">${(tech.price||0)===0?'已含':'¥'+(tech.price||0).toLocaleString()}</span></div>`;
+  if (immediateImplant) {
+    const imm = addonsAll.find(a=>a.id==='immediate');
+    html += `<div class="receipt-item"><span class="item-name">　└ ${imm?imm.name:'即刻种植'}（即拔即种）</span><span class="item-price">${imm?'¥'+imm.price.toLocaleString():''}</span></div>`;
+  }
+  addonItems.forEach(a => {
+    html += `<div class="receipt-item"><span class="item-name">${a.name||''}</span><span class="item-price">¥${(a.price||0).toLocaleString()}</span></div>`;
+  });
+  html += `</div>`;
+  // 质保
+  html += `<div class="receipt-section">
+    <div class="section-label">▎质保 <span class="sl-tag warranty">自由选择</span></div>`;
+  if (pw) html += `<div class="receipt-item"><span class="item-name">产品质保：${pw.label||''}</span><span class="item-price">${pw.price===0?'已含':'¥'+pw.price.toLocaleString()}</span></div>`;
+  if (mw) html += `<div class="receipt-item"><span class="item-name">医疗质保：${mw.label||''}</span><span class="item-price">${mw.price===0?'已含':'¥'+mw.price.toLocaleString()}</span></div>`;
+  html += `</div>`;
+
+  html += `<hr class="receipt-divider">`;
+  html += `<div class="receipt-total"><span>方案参考总价</span><span class="total-price">¥${(pp+tp+wp).toLocaleString()}</span></div>`;
+  html += `<div style="margin-top:10px;font-size:11px;color:var(--text-light);line-height:1.8;">
+    产品费 ¥${pp.toLocaleString()} ＋ 技术服务费 ¥${tp.toLocaleString()} ＋ 质保费 ¥${wp.toLocaleString()}
+  </div>`;
+
+  document.getElementById('receiptContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal(e) { if (e.target===document.getElementById('modalOverlay')) document.getElementById('modalOverlay').classList.remove('show'); }
+function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+// ==================== INIT ====================
+renderImplants(); renderCrowns(); renderDoctors(); renderTechniques(); renderAddons(); renderWarranty(); update();
+</script>
+
+</body>
+</html>
