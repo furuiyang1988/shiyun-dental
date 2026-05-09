@@ -6,52 +6,52 @@
 
 // ==================== 诊所信息 ====================
 var CLINIC_CONFIG = {
-  name: "诗韵口腔",
-  subtitle: "自由搭配 · 透明定价",
-  headerTitle: "选择您的\n种植方案",
-  headerSubtitle: "产品 · 技术服务 · 质保 — 三大项自由组合",
-  contact: "",          // 诊所联系电话
-  logo: "",             // 诊所logo图片路径（可选）
+  name: '诗韵口腔',
+  subtitle: '自由搭配 · 透明定价',
+  headerTitle: '选择您的\n种植方案',
+  headerSubtitle: '产品 · 技术服务 · 质保 — 三大项自由组合',
+  contact: '',
+  logo: ''
 };
 
-// ==================== 产品 - 种植体（国家集采） ====================
+// ==================== 产品 - 种植体 ====================
 var implants = [
-  { id:'baikangte',     name:'百康特',            brand:'国产集采',              origin:'🇨🇳 中国',  feat:'集采中选品牌 · 质量可靠 · 价格惠民',                    price:630,   icon:'百', tag:'集采' },
-  { id:'snugcone',      name:'仕诺康',            brand:'SNUCONE',               origin:'🇰🇷 韩国',  feat:'韩系性价比之选 · 工艺稳定 · 适应症广',                  price:729,   icon:'仕', tag:'集采' },
-  { id:'osstem',        name:'Osstem',            brand:'Osstem',                origin:'🇰🇷 韩国',  feat:'亚洲人适配 · 结构设计精良 · 初期固位力强',              price:771,   icon:'O',  tag:'集采' },
-  { id:'cowell',        name:'Cowell',            brand:'Cowell',                origin:'🇰🇷 韩国',  feat:'韩系优质品牌 · 工艺成熟 · 临床认可度高',                price:729,   icon:'C',  tag:'集采' },
-  { id:'meishuda',      name:'每舒达',            brand:'Meshuda',               origin:'🇰🇷 韩国',  feat:'韩系新锐品牌 · 高性价比 · 品质可靠',                    price:729,   icon:'每', tag:'集采' },
-  { id:'point',         name:'Point',             brand:'Point',                 origin:'🇰🇷 韩国',  feat:'韩系经典品牌 · 稳定性好 · 临床广泛应用',                price:729,   icon:'P',  tag:'集采' },
-  { id:'hiossen',       name:'HIOSSEN 皓圣',      brand:'HIOSSEN',               origin:'🇺🇸 美国',  feat:'即刻种植代表品牌 · 骨结合快 · 长期稳定',               price:1500,  icon:'H',  tag:'集采' },
-  { id:'straumann',     name:'Straumann',         brand:'Straumann',             origin:'🇨🇭 瑞士',  feat:'瑞士精工 · SLActive表面技术 · 全球领先',               price:1855,  icon:'S',  tag:'集采' },
-  { id:'nobel_pmc',     name:'诺贝尔 PMC',        brand:'Nobel Biocare',         origin:'🇸🇪 瑞典',  feat:'种植牙发明者 · 经典传承 · 品质卓越',                    price:1855,  icon:'N',  tag:'集采' },
-  { id:'point_hydro',   name:'Point 亲水',        brand:'Point Hydrophilic',     origin:'🇰🇷 韩国',  feat:'亲水表面 · 加速骨结合 · 愈合周期缩短30%',              price:5500,  icon:'P+', tag:'高端' },
-  { id:'osstem_hydro',  name:'Osstem 亲水',       brand:'Osstem Hydrophilic',    origin:'🇰🇷 韩国',  feat:'亲水升级款 · 即刻负重优选 · 骨增量适配',               price:5500,  icon:'O+', tag:'高端' },
-  { id:'nobel_active',  name:'诺贝尔 Active 金粒',brand:'Nobel Biocare',         origin:'🇸🇪 瑞典',  feat:'全球顶级 · 即刻负重 · 终身质保',                       price:12000, icon:'金', tag:'高端' },
-  { id:'straumann_hydro',name:'Straumann 亲水',    brand:'Straumann Roxolid',     origin:'🇨🇭 瑞士',  feat:'瑞锆亲水 · 钛锆合金 · 强度提升30%',                    price:10000, icon:'瑞', tag:'高端' }
+  { id:'baikangte',     name:'百康特',          brand:'国产集采',            origin:'🇨🇳 中国',  feat:'集采中选品牌 · 质量可靠 · 价格惠民',                   price:630,   icon:'百', tag:'集采' },
+  { id:'snugcone',      name:'仕诺康',          brand:'SNUCONE',             origin:'🇰🇷 韩国',  feat:'韩系性价比之选 · 工艺稳定 · 适应症广',                 price:729,   icon:'仕', tag:'集采' },
+  { id:'osstem',        name:'奥齿泰',          brand:'Osstem',              origin:'🇰🇷 韩国',  feat:'亚洲人适配 · 结构设计精良 · 初期固位力强',             price:771,   icon:'O',  tag:'集采' },
+  { id:'cowell',        name:'柯威尔',          brand:'Cowell',              origin:'🇰🇷 韩国',  feat:'韩系优质品牌 · 工艺成熟 · 临床认可度高',               price:729,   icon:'C',  tag:'集采' },
+  { id:'meishuda',      name:'每舒达',          brand:'Meshuda',             origin:'🇰🇷 韩国',  feat:'韩系新锐品牌 · 高性价比 · 品质可靠',                   price:729,   icon:'M',  tag:'集采' },
+  { id:'point',         name:'Point',           brand:'Point',               origin:'🇰🇷 韩国',  feat:'韩系经典品牌 · 稳定性好 · 临床广泛应用',               price:729,   icon:'P',  tag:'集采' },
+  { id:'hiossen',       name:'皓圣',            brand:'HIOSSEN',             origin:'🇺🇸 美国',  feat:'即刻种植代表品牌 · 骨结合快 · 长期稳定',              price:1500,  icon:'H',  tag:'集采' },
+  { id:'straumann',     name:'士卓曼',          brand:'Straumann',           origin:'🇨🇭 瑞士',  feat:'瑞士精工 · SLActive表面技术 · 全球领先',              price:1855,  icon:'S',  tag:'集采' },
+  { id:'nobel_pmc',     name:'诺贝尔 PMC',      brand:'Nobel Biocare',       origin:'🇸🇪 瑞典',  feat:'种植牙发明者 · 经典传承 · 品质卓越',                   price:1855,  icon:'N',  tag:'集采' },
+  { id:'point_hydro',   name:'Point 亲水',      brand:'Point Hydrophilic',   origin:'🇰🇷 韩国',  feat:'亲水表面 · 加速骨结合 · 愈合周期缩短30%',             price:5500,  icon:'P+', tag:'高端' },
+  { id:'osstem_hydro',  name:'Osstem 亲水',     brand:'Osstem Hydrophilic',  origin:'🇰🇷 韩国',  feat:'亲水升级款 · 即刻负重优选 · 骨增量适配',              price:5500,  icon:'O+', tag:'高端' },
+  { id:'nobel_active',  name:'诺贝尔 Active 金致',brand:'Nobel Biocare',     origin:'🇸🇪 瑞典',  feat:'全球顶级 · 即刻负重 · 终身质保',                      price:5940,  icon:'金', tag:'高端' },
+  { id:'straumann_hydro',name:'Straumann 亲水',  brand:'Straumann Roxolid',   origin:'🇨🇭 瑞士',  feat:'瑞锆亲水 · 钛锆合金 · 强度提升30%',                  price:5940,  icon:'瑞', tag:'高端' }
 ];
 
-// ==================== 产品 - 牙冠（国家集采） ====================
+// ==================== 产品 - 牙冠 ====================
 var crowns = [
-  { id:'lava',    name:'LAVA全瓷冠',     brand:'3M Lava',      origin:'🇺🇸 美国',  feat:'顶级美学 · 强度1400MPa · 前牙首选',      price:3500,  icon:'L',  tag:'高端' },
-  { id:'wieland', name:'威兰德全瓷冠',   brand:'Wieland',      origin:'🇩🇪 德国',  feat:'高透美学 · 德国精工 · 内外兼修',          price:2500,  icon:'W',  tag:'中高端' },
-  { id:'upcera',  name:'爱尔创全瓷冠',   brand:'Upcera',       origin:'🇨🇳 中国',  feat:'国产高端 · 性价比之选 · 集采中选',         price:1500,  icon:'爱', tag:'集采' },
-  { id:'pfm',     name:'烤瓷冠',         brand:'钴铬合金',      origin:'🇨🇳 中国',  feat:'经济实惠 · 后牙适用 · 基础款',            price:800,   icon:'烤', tag:'基础' },
-  { id:'girrbach',name:'吉尔巴赫全瓷冠',  brand:'Amann Girrbach',origin:'🇩🇪 德国',  feat:'95%二氧化锆 · 硬度1500MPa · 后牙长桥优选', price:550,   icon:'吉', tag:'集采' }
+  { id:'lava',    name:'LAVA全瓷冠',      brand:'3M Lava',         origin:'🇺🇸 美国',  feat:'顶级美学 · 强度1400MPa · 前牙首选',      price:656,   icon:'L',  tag:'高端' },
+  { id:'wieland', name:'威兰德全瓷冠',    brand:'Wieland',         origin:'🇩🇪 德国',  feat:'高透美学 · 德国精工 · 内外兼修',          price:441,   icon:'W',  tag:'中高端' },
+  { id:'upcera',  name:'爱尔创全瓷冠',    brand:'Upcera',          origin:'🇨🇳 中国',  feat:'国产高端 · 性价比之选 · 集采中选',         price:259,   icon:'爱', tag:'集采' },
+  { id:'pfm',     name:'烤瓷冠',          brand:'钴铬合金',         origin:'🇨🇳 中国',  feat:'经济实惠 · 后牙适用 · 基础款',            price:180,   icon:'烤', tag:'基础' },
+  { id:'girrbach',name:'吉尔巴赫全瓷冠',  brand:'Amann Girrbach',   origin:'🇩🇪 德国',  feat:'95%二氧化锆 · 硬度1500MPa · 后牙长桥优选', price:408,   icon:'吉', tag:'集采' }
 ];
 
-// ==================== 技术服务 - 医生（分级调控） ====================
+// ==================== 技术服务 - 医生 ====================
 var doctors = [
-  { id:'zhang', name:'张伟', title:'主任医师',   years:25,  cases:5000,  spec:'全口种植 · 即刻负重 · 骨增量',             baseFee:3500, avatar:'张' },
-  { id:'li',    name:'李明', title:'副主任医师', years:15,  cases:2000,  spec:'数字化导板 · 前牙美学 · 微创种植',         baseFee:2500, avatar:'李' },
-  { id:'wang',  name:'王芳', title:'主治医师',    years:8,   cases:800,   spec:'常规种植 · 微创种植 · 牙周治疗',            baseFee:1500, avatar:'王' }
+  { id:'Li',   name:'李娟',   title:'特邀口腔种植专家', years:23, cases:5000, spec:'全口微创种植 · 即刻负重 · 高级骨增量', baseFee:2860, avatar:'李' },
+  { id:'Guo',  name:'郭贞',   title:'主治医师',           years:33, cases:5000, spec:'口腔治疗 · 前牙美学 · 常规种植',           baseFee:1800, avatar:'郭' },
+  { id:'Hou',  name:'侯立敏', title:'主治医师',           years:8,  cases:13,   spec:'常规种植 · 口腔修复 · 牙周治疗',           baseFee:600,  avatar:'侯' }
 ];
 
-// ==================== 技术服务 - 种植方案（医生基础费上叠加） ====================
+// ==================== 技术服务 - 种植方案 ====================
 var techniques = [
-  { id:'digital',    name:'🎯 数字化导板精准种植',  desc:'CBCT+口扫+3D打印导板，精准到0.1mm，微创出血少，恢复快',  price:1500 },
-  { id:'navigation', name:'🧭 3D打印手术导板辅助', desc:'术前模拟+定制导板，定位准确，手术时间缩短30%',               price:1000 },
-  { id:'standard',   name:'✋ 标准种植',             desc:'经验丰富的医生凭手感操作，适合常规简单病例',                  price:0    }
+  { id:'digital',    name:'🎯 数字化导板精准种植',  desc:'CBCT+口扫+3D打印导板，精准到0.1mm，微创出血少，恢复快',  price:0 },
+  { id:'navigation', name:'🧭 3D打印手术导板辅助',  desc:'术前模拟+定制导板，定位准确，手术时间缩短30%',               price:2 },
+  { id:'standard',   name:'✋ 标准种植',             desc:'经验丰富的医生凭手感操作，适合常规简单病例',                  price:0 }
 ];
 
 // ==================== 技术服务 - 附加术式 ====================
