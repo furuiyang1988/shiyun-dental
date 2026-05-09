@@ -21,7 +21,7 @@ var implants = [
   { id:'osstem',        name:'奥齿泰',          brand:'Osstem',              origin:'🇰🇷 韩国',  feat:'亚洲人适配 · 结构设计精良 · 初期固位力强',             price:771,   icon:'O',  tag:'集采' },
   { id:'cowell',        name:'柯威尔',          brand:'Cowell',              origin:'🇰🇷 韩国',  feat:'韩系优质品牌 · 工艺成熟 · 临床认可度高',               price:729,   icon:'C',  tag:'集采' },
   { id:'meishuda',      name:'每舒达',          brand:'Meshuda',             origin:'🇰🇷 韩国',  feat:'韩系新锐品牌 · 高性价比 · 品质可靠',                   price:729,   icon:'M',  tag:'集采' },
-  { id:'point',         name:'盘泰',           brand:'Point',               origin:'🇰🇷 韩国',  feat:'韩系经典品牌 · 稳定性好 · 临床广泛应用',               price:729,   icon:'P',  tag:'集采' },
+  { id:'point',         name:'Point',           brand:'Point',               origin:'🇰🇷 韩国',  feat:'韩系经典品牌 · 稳定性好 · 临床广泛应用',               price:729,   icon:'P',  tag:'集采' },
   { id:'hiossen',       name:'皓圣',            brand:'HIOSSEN',             origin:'🇺🇸 美国',  feat:'即刻种植代表品牌 · 骨结合快 · 长期稳定',              price:1500,  icon:'H',  tag:'集采' },
   { id:'straumann',     name:'士卓曼',          brand:'Straumann',           origin:'🇨🇭 瑞士',  feat:'瑞士精工 · SLActive表面技术 · 全球领先',              price:1855,  icon:'S',  tag:'集采' },
   { id:'nobel_pmc',     name:'诺贝尔 PMC',      brand:'Nobel Biocare',       origin:'🇸🇪 瑞典',  feat:'种植牙发明者 · 经典传承 · 品质卓越',                   price:1855,  icon:'N',  tag:'集采' },
@@ -42,8 +42,8 @@ var crowns = [
 
 // ==================== 技术服务 - 医生 ====================
 var doctors = [
-  { id:'Li',   name:'李娟',   title:'特邀口腔种植专家', years:23, cases:50000+, spec:'全口微创种植 · 即刻负重 · 高级骨增量', baseFee:2860, avatar:'李' },
-  { id:'Guo',  name:'郭贞',   title:'主治医师',           years:33, cases:150+, spec:'口腔治疗 · 前牙美学 · 常规种植',           baseFee:1800, avatar:'郭' },
+  { id:'Li',   name:'李娟',   title:'特邀口腔种植专家', years:23, cases:5000, spec:'全口微创种植 · 即刻负重 · 高级骨增量', baseFee:2860, avatar:'李' },
+  { id:'Guo',  name:'郭贞',   title:'主治医师',           years:33, cases:5000, spec:'口腔治疗 · 前牙美学 · 常规种植',           baseFee:1800, avatar:'郭' },
   { id:'Hou',  name:'侯立敏', title:'主治医师',           years:8,  cases:13,   spec:'常规种植 · 口腔修复 · 牙周治疗',           baseFee:600,  avatar:'侯' }
 ];
 
@@ -72,9 +72,9 @@ var productWarrantyOpts = [
 
 // ==================== 质保 - 医疗质保选项 ====================
 var medicalWarrantyOpts = [
-  { id:'mw1',  label:'基础5年医疗质保',   badge:'含',  price:0    },
-  { id:'mw3',  label:'延长至10年医疗质保', badge:'推荐', price:199 },
-  { id:'mw5',  label:'延长至20年医疗质保', badge:'顶配', price:298 }
+  { id:'mw1',  label:'基础1年医疗质保',   badge:'含',  price:0    },
+  { id:'mw3',  label:'延长至3年医疗质保', badge:'推荐', price:1500 },
+  { id:'mw5',  label:'延长至5年医疗质保', badge:'顶配', price:2500 }
 ];
 
 // ==================== 页面文案配置 ====================
