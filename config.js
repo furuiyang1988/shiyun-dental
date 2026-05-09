@@ -36,7 +36,8 @@ var crowns = [
   { id:'lava',    name:'LAVA全瓷冠',     brand:'3M Lava',      origin:'🇺🇸 美国',  feat:'顶级美学 · 强度1400MPa · 前牙首选',      price:3500,  icon:'L',  tag:'高端' },
   { id:'wieland', name:'威兰德全瓷冠',   brand:'Wieland',      origin:'🇩🇪 德国',  feat:'高透美学 · 德国精工 · 内外兼修',          price:2500,  icon:'W',  tag:'中高端' },
   { id:'upcera',  name:'爱尔创全瓷冠',   brand:'Upcera',       origin:'🇨🇳 中国',  feat:'国产高端 · 性价比之选 · 集采中选',         price:1500,  icon:'爱', tag:'集采' },
-  { id:'pfm',     name:'烤瓷冠',         brand:'钴铬合金',      origin:'🇨🇳 中国',  feat:'经济实惠 · 后牙适用 · 基础款',            price:800,   icon:'烤', tag:'基础' }
+  { id:'pfm',     name:'烤瓷冠',         brand:'钴铬合金',      origin:'🇨🇳 中国',  feat:'经济实惠 · 后牙适用 · 基础款',            price:800,   icon:'烤', tag:'基础' },
+  { id:'girrbach',name:'吉尔巴赫全瓷冠',  brand:'Amann Girrbach',origin:'🇩🇪 德国',  feat:'95%二氧化锆 · 硬度1500MPa · 后牙长桥优选', price:550,   icon:'吉', tag:'集采' }
 ];
 
 // ==================== 技术服务 - 医生（分级调控） ====================
