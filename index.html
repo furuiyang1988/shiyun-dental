@@ -155,6 +155,7 @@ body {
 .policy-tag.procurement { background: var(--policy-blue-bg); color: var(--policy-blue); }
 .policy-tag.zero { background: var(--policy-green-bg); color: var(--policy-green); }
 .policy-tag.regulation { background: #FDF6F0; color: #B87040; }
+.policy-tag.nonprocurement { background: #FFF3E0; color: #D4740E; }
 
 /* Main Content */
 .main-content { padding: 14px 20px; padding-bottom: 130px; }
@@ -699,7 +700,7 @@ function renderImplants() {
       <div class="card-sub">${(b.origin||'') + ' · ' + (b.brand||'')}</div>
       <div class="card-feat">${b.feat||''}</div>
       <div class="card-price">¥${(b.price||0).toLocaleString()} <span>/颗</span></div>
-      <div class="card-tags">${b.tag==='集采'?'<span class="policy-tag procurement">国家集采</span><span class="policy-tag zero">0差价</span>':'<span class="policy-tag regulation">高端升级</span>'}</div>
+      <div class="card-tags">${b.tag==='集采'?'<span class="policy-tag procurement">国家集采</span><span class="policy-tag zero">0差价</span>':b.tag==='非集采'?'<span class="policy-tag nonprocurement">非集采</span>':'<span class="policy-tag regulation">高端升级</span>'}</div>
     </div>
   `).join('');
 }
