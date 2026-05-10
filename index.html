@@ -93,14 +93,16 @@ var TEXT_CONFIG = {
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+@keyframes spin { to { transform: rotate(360deg); } }
+
 * { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
   background: #E8E3DD;
   display: flex; justify-content: center; align-items: flex-start;
-  min-height: 100vh; padding: 20px 0;
-  -webkit-font-smoothing: antialiased;
+  min-height: 100vh; padding: 0;
+  -webkit-font-smoothing: antialiased; overscroll-behavior: none;
 }
 
 .phone-frame {
@@ -114,7 +116,7 @@ body {
 /* Status Bar */
 .status-bar {
   height: 44px; background: var(--primary);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: flex-end;
   padding: 0 20px; color: white; font-size: 13px; font-weight: 500;
 }
 
@@ -469,7 +471,6 @@ body {
   <div style="width:40px;height:40px;border:3px solid #E8E3DD;border-top:3px solid #1A7A7A;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
   <div style="color:#7F8C8D;font-size:14px;">诗韵口腔 · 种植中心</div>
 </div>
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <div class="phone-frame" id="app">
   <div class="status-bar">
@@ -979,7 +980,7 @@ function showToast(msg) {
 
 // ==================== INIT ====================
 renderImplants(); renderCrowns(); renderDoctors(); renderTechniques(); renderAddons(); renderWarranty(); update();
-(function(){var l=document.getElementById('loading');if(l)l.style.display='none';})();
+(function(){var l=document.getElementById('loading');if(l)l.remove();})();
 </script>
 
 </body>
