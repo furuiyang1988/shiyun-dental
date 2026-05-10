@@ -25,8 +25,8 @@ var implants = [
   { id:'hiossen',       name:'皓圣',            brand:'HIOSSEN',             origin:'🇺🇸 美国',  feat:'即刻种植代表品牌 · 骨结合快 · 长期稳定',              price:1500,  icon:'H',  tag:'集采' },
   { id:'straumann',     name:'士卓曼',          brand:'Straumann',           origin:'🇨🇭 瑞士',  feat:'瑞士精工 · SLActive表面技术 · 全球领先',              price:1855,  icon:'S',  tag:'集采' },
   { id:'nobel_pmc',     name:'诺贝尔 PMC',      brand:'Nobel Biocare',       origin:'🇸🇪 瑞典',  feat:'种植牙发明者 · 经典传承 · 品质卓越',                   price:1855,  icon:'N',  tag:'集采' },
-  { id:'point_hydro',   name:'Point 亲水',      brand:'Point Hydrophilic',   origin:'🇰🇷 韩国',  feat:'亲水表面 · 加速骨结合 · 愈合周期缩短30%',             price:5500,  icon:'P+', tag:'高端' },
-  { id:'osstem_hydro',  name:'Osstem 亲水',     brand:'Osstem Hydrophilic',  origin:'🇰🇷 韩国',  feat:'亲水升级款 · 即刻负重优选 · 骨增量适配',              price:5500,  icon:'O+', tag:'高端' },
+  { id:'point_hydro',   name:'Point 亲水',      brand:'Point Hydrophilic',   origin:'🇰🇷 韩国',  feat:'亲水表面 · 加速骨结合 · 愈合周期缩短30%',             price:5500,  icon:'P+', tag:'中高端' },
+  { id:'osstem_hydro',  name:'Osstem 亲水',     brand:'Osstem Hydrophilic',  origin:'🇰🇷 韩国',  feat:'亲水升级款 · 即刻负重优选 · 骨增量适配',              price:5500,  icon:'O+', tag:'中高端' },
   { id:'nobel_active',  name:'诺贝尔 Active 金致',brand:'Nobel Biocare',     origin:'🇸🇪 瑞典',  feat:'全球顶级 · 即刻负重 · 终身质保',                      price:5940,  icon:'金', tag:'高端' },
   { id:'straumann_hydro',name:'Straumann 亲水',  brand:'Straumann Roxolid',   origin:'🇨🇭 瑞士',  feat:'瑞锆亲水 · 钛锆合金 · 强度提升30%',                  price:5940,  icon:'瑞', tag:'高端' }
 ];
